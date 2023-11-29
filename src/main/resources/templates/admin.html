@@ -5,14 +5,17 @@
     <title>Все юзеры</title>
 </head>
 <body>
-ВЕСЬ СПИСОК
+ВЕСЬ СПИСОК ТОЛЬКО ДЛЯ АДМИНОВ
+
 <div th:each="us : ${user}">
     <a th:text="${us.getUsername()}"></a>
     <a th:text="${us.getAge()}"></a>
-    <form th:action="@{/user/{id}/edit(id=${us.getId()})}">
+    <a th:text="${us.getPassword()}"></a>
+    <div th:each="role: ${us.getRoles()}" th:text="${role.getName()}">role</div>
+    <form th:action="@{/admin/{id}/edit(id=${us.getId()})}">
         <input type="submit" value="Edit"/>
     </form>
-    <form th:method="DELETE" th:action="@{/user/{id}(id=${us.getId()})}">
+    <form th:method="DELETE" th:action="@{/admin/{id}/delete(id=${us.getId()})}">
         <input type="submit" value="Delete"/>
     </form>
 
@@ -20,10 +23,10 @@
 <form th:action="@{/admin/new}">
     <input type="submit" value="ADD"/>
 </form>
+
 <form th:action="@{/logout}">
     <input type="submit" value="Logout"/>
 </form>
 
 </body>
 </html>
-

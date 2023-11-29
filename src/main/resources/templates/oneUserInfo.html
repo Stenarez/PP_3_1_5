@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Info</title>
+</head>
+<body>
+<div th:each="us : ${user}">
+    <a th:text="${us.getId()}"></a>
+    <a th:text="${us.getUsername()}"></a>
+    <a th:text="${us.getAge()}"></a>
+    <a th:text="${us.getPassword()}"></a>
+    <div th:each="role: ${us.getRoles()}" th:text="${role.getName()}">role</div>
+</div>
+<form th:action="@{/logout}">
+    <input type="submit" value="Logout"/>
+</form>
+</body>
+</html>
