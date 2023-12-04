@@ -30,17 +30,17 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+            throw new UsernameNotFoundException(String.format("User '%s' not found", email));
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getRoles());
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getRoles());
     }
 
     private Collection<? extends GrantedAuthority> authorities(Collection<Role> roles) {
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public boolean addUser(User user) {
-        User userFromDB = userRepository.findByUsername(user.getUsername());
+        User userFromDB = userRepository.findByEmail(user.getEmail());
 
         if (userFromDB != null) {
             return false;
@@ -83,4 +83,5 @@ public class UserServiceImpl implements UserService {
     public User showUserById(int id) {
         return userRepository.findById(id).get();
     }
+
 }

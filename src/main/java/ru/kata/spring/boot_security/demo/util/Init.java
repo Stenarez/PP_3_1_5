@@ -20,7 +20,7 @@ public class Init {
     }
 
     @PostConstruct
-    public void initDataBase() {
+    public void init() {
         Role admin = new Role("ROLE_ADMIN");
         Role user = new Role("ROLE_USER");
         List<Role> adminSet = List.of(admin);
@@ -30,7 +30,9 @@ public class Init {
         User adminUser = new User();
         adminUser.setId(1);
         adminUser.setRoles(adminSet);
-        adminUser.setUsername("admin");
+        adminUser.setFirstname("admin");
+        adminUser.setLastname("admin");
+        adminUser.setEmail("email@email.ru");
         adminUser.setAge((byte) 56);
         adminUser.setPassword("admin");
         userService.addUser(adminUser);

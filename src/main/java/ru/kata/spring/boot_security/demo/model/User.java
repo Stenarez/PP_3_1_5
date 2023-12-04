@@ -15,7 +15,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String username;
+    private String firstname;
+    private String lastname;
+    private String email;
     private String password;
 
     private Byte age;
@@ -28,20 +30,23 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(int id, String username, String password, Byte age, List<Role> roles) {
+    public User(int id, String firstname, String lastname, String email, String password, Byte age, List<Role> roles) {
         this.id = id;
-        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
         this.password = password;
         this.age = age;
         this.roles = roles;
     }
 
-
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", username='" + username + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", age=" + age +
                 '}';
@@ -55,20 +60,36 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public Byte getAge() {
-        return age;
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Byte getAge() {
+        return age;
     }
 
     public void setAge(Byte age) {
@@ -84,6 +105,11 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return null;
     }
 
     public List<Role> getRoles() {
