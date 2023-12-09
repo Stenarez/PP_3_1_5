@@ -1,8 +1,5 @@
 const urlUsers = '/api/admin';
-
 const users = '/api/user';
-
-
 const deleteUserModal = new bootstrap.Modal(document.getElementById('deleteModal'))
 const editUserModal = new bootstrap.Modal(document.getElementById(`editModal`))
 
@@ -25,7 +22,6 @@ function allUser() {
     fetch(urlUsers)
         .then(response => response.json())
         .then(users => {
-
 
                 for (let i of users) {
                     let roles = ''
@@ -57,7 +53,6 @@ function allUser() {
                 document.getElementById("users-table").innerHTML = result;
             }
         )
-
 }
 
 
@@ -95,11 +90,9 @@ newUser.addEventListener('submit', (e) => {
             addUserToTable(newUser);
             newUser.reset();
 
-
             $('[href="#nav-home"]').tab('show');
 
         })
-
 })
 
 function addUserToTable(user) {
@@ -159,11 +152,9 @@ function editModal(id) {
                     editForm.password.value = u.password;
                     editForm.roles.value = u.roles;
 
-
                     editUserModal.show()
 
                 })
-
         })
 }
 
@@ -201,7 +192,6 @@ document.getElementById('editModal').addEventListener('submit', (e) => {
             $('#editModal').modal('hide')
 
         })
-
 })
 
 function updateTableRow(updatedUser) {
@@ -257,11 +247,9 @@ function deleteModal(id) {
                     deleteForm.password.value = u.password;
                     deleteForm.roles.value = u.roles;
 
-
                     deleteUserModal.show()
 
                 })
-
         })
 }
 
