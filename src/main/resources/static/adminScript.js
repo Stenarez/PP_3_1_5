@@ -1,21 +1,11 @@
 const urlUsers = '/api/admin';
-const urlRoles = '/admin/users/roles/';
-const admin = '/api/admin';
+
 const users = '/api/user';
 
-const allUsers = fetch(urlUsers).then(response => response.json())
-// const allRoles = fetch(urlRoles).then(response => response.json())
 
 const deleteUserModal = new bootstrap.Modal(document.getElementById('deleteModal'))
 const editUserModal = new bootstrap.Modal(document.getElementById(`editModal`))
 
-// const on = (element, event, selector, handler) => {
-//     element.addEventListener(event, e => {
-//         if (e.target.closest(selector)) {
-//             handler(e.target)
-//         }
-//     })
-// }
 fetch(users)
     .then(res => res.json())
     .then((user) => {
@@ -27,20 +17,21 @@ fetch(users)
         <span> ${allRole}</span>`
     })
 let result = ''
-allUser();
+allUser()
 
 
 // Заполнение таблицы пользователей
 function allUser() {
+    fetch(urlUsers)
+        .then(response => response.json())
+        .then(users => {
 
 
-    allUsers.then(users => {
-
-            for (let i of users) {
-                let roles = ''
-                i.roles.forEach(role =>
-                    roles += role.name.replace('ROLE_', '') + ' ')
-                result += `<tr id="userRow_${i.id}">
+                for (let i of users) {
+                    let roles = ''
+                    i.roles.forEach(role =>
+                        roles += role.name.replace('ROLE_', '') + ' ')
+                    result += `<tr id="userRow_${i.id}">
 
                     <td>${i.id}</td>
                     <td>${i.firstname}</td>
@@ -61,15 +52,13 @@ function allUser() {
                          </td> 
                     </tr>`
 
-            }
+                }
 
-            document.getElementById("users-table").innerHTML = result;
-        }
-    )
+                document.getElementById("users-table").innerHTML = result;
+            }
+        )
 
 }
-
-
 
 
 // //Добавление пользователя
@@ -78,12 +67,13 @@ newUser.addEventListener('submit', (e) => {
     e.preventDefault()
     let role = document.getElementById('addRoles')
     let rolesAddUser = []
-    // let rolesAddUserValue = ''
+
     for (let i = 0; i < role.options.length; i++) {
         if (role.options[i].selected) {
-            rolesAddUser.push({id: role.options[i].value, name: role.options[i].text
+            rolesAddUser.push({
+                id: role.options[i].value, name: role.options[i].text
             })
-            // rolesAddUserValue += role.options[i].innerHTML + ' '
+
         }
     }
     fetch(urlUsers, {
@@ -111,6 +101,7 @@ newUser.addEventListener('submit', (e) => {
         })
 
 })
+
 function addUserToTable(user) {
     let roles = '';
     user.roles.forEach(role => {
@@ -140,7 +131,7 @@ function addUserToTable(user) {
     result = ''
     $('[href="#nav-home"]').tab('show');
 }
-//
+
 // // Изменение пользователя
 const idEdit = document.getElementById('idEdit')
 const firstNameEdit = document.getElementById('firstNameEdit')
@@ -148,10 +139,11 @@ const lastNameEdit = document.getElementById('lastNameEdit')
 const ageEdit = document.getElementById('ageEdit')
 const emailEdit = document.getElementById('emailEdit')
 const passwordEdit = document.getElementById('passwordEdit')
-const rolesEdit = document.getElementById('rolesEdit')
+
 
 let rowEdit = null
 idUser = document.getElementById('idEdit')
+
 function editModal(id) {
     let editForm = document.forms["editForm"];
 
@@ -183,7 +175,7 @@ document.getElementById('editModal').addEventListener('submit', (e) => {
     let rolesUserEditValue = ''
     for (let i = 0; i < role.options.length; i++) {
         if (role.options[i].selected) {
-            rolesUserEdit.push({ name: role.options[i].text})
+            rolesUserEdit.push({name: role.options[i].text})
             rolesUserEditValue += role.options[i].innerHTML + ' '
         }
     }
@@ -211,6 +203,7 @@ document.getElementById('editModal').addEventListener('submit', (e) => {
         })
 
 })
+
 function updateTableRow(updatedUser) {
     let roles = '';
     updatedUser.roles.forEach(role => {
@@ -248,13 +241,6 @@ function updateTableRow(updatedUser) {
 }
 
 // Удаление
-const idDelete = document.getElementById('idDelete')
-const firstNameDelete = document.getElementById('firstNameDelete')
-const lastNameDelete = document.getElementById('lastNameDelete')
-const ageDelete = document.getElementById('ageDelete')
-const emailDelete = document.getElementById('emailDelete')
-const passwordDelete = document.getElementById('passwordDelete')
-const rolesDelete = document.getElementById('rolesDelete')
 
 function deleteModal(id) {
     let deleteForm = document.forms["deleteForm"];
@@ -271,15 +257,12 @@ function deleteModal(id) {
                     deleteForm.password.value = u.password;
                     deleteForm.roles.value = u.roles;
 
-                    // Скрываем модальное окно после успешного заполнения данных
-                    $('#deleteModal').modal('hide');
-                    // Показываем модальное окно после закрытия
-                    $('#deleteModal').on('hidden.bs.modal', function () {
-                        deleteUserModal.show();
-                    });
+
+                    deleteUserModal.show()
 
                 })
-        });
+
+        })
 }
 
 document.getElementById('deleteForm').addEventListener('submit', (e) => {
@@ -288,189 +271,11 @@ document.getElementById('deleteForm').addEventListener('submit', (e) => {
     fetch(`/api/admin/${uid}`, {
         method: 'DELETE'
     })
-        .then(res => res.json())
         .then(() => {
-            // Очищаем форму после закрытия модального окна
-            deleteForm.reset();
-            // Обновляем данные в таблице
-            allUser();
-        });
+            $('#deleteModal').modal('hide')
+            result = ''
+            fetch(urlUsers)
+                .then(res => res.json())
+                .then(() => allUser())
+        })
 });
-// function deleteModal(id) {
-//     let deleteForm = document.forms["deleteForm"];
-//
-//     fetch(`/api/admin/` + id)
-//         .then(response => {
-//             response.json()
-//                 .then(u => {
-//                     deleteForm.elements.id.value = u.id;
-//                     deleteForm.firstname.value = u.firstname;
-//                     deleteForm.lastname.value = u.lastname;
-//                     deleteForm.age.value = u.age;
-//                     deleteForm.email.value = u.email;
-//                     deleteForm.password.value = u.password;
-//                     deleteForm.roles.value = u.roles;
-//
-//
-//                    deleteUserModal.show()
-//
-//                 })
-//
-//         })
-// }
-//
-// document.getElementById('deleteForm').addEventListener('submit', (e) => {
-//     e.preventDefault()
-//     const uid = document.getElementById('idDelete').value
-//     fetch(`/api/admin/${uid}`, {
-//         method: 'DELETE'
-//     })
-//         .then(res => res.json())
-//         .then(() => {
-//
-//             $('#deleteModal').modal('hide')
-//             result = ''
-//             // allUser()
-//             // fetch(urlUsers)
-//             //     .then(res => res.json())
-//             //     .then(() => allUser())
-//             deleteForm.reset();
-//             // Обновляем данные в таблице
-//             allUser();
-//         })
-// })
-
-// document.getElementById('deleteModal').addEventListener('submit', (e) => {
-//     e.preventDefault()
-//     let role = document.getElementById('rolesDelete')
-//     let rolesUserDelete = []
-//     let rolesUserDeleteValue = ''
-//     for (let i = 0; i < role.options.length; i++) {
-//         if (role.options[i].selected) {
-//             rolesUserDelete.push({id: role.options[i].value, name: role.options[i].text})
-//             rolesUserDeleteValue += role.options[i].innerHTML + ' '
-//         }
-//     }
-//
-//
-//     fetch(urlUsers + '/' + idDelete.value, {
-//         method: 'DELETE',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             id: idDelete.value,
-//             firstname: firstNameDelete.value,
-//             lastname: lastNameDelete.value,
-//             age: ageDelete.value,
-//             email: emailDelete.value,
-//             password: passwordDelete.value,
-//             roles: rolesUserDelete
-//         })
-//     })
-//         // .then(res => console.log(res))
-//         .then(() => {
-//             result = ''
-//             $('#deleteModal').modal('hide')
-//
-//
-//             // document.getElementById("users-table").reset()
-//             // allUser()
-//             // result = ''
-//             fetch(urlUsers)
-//                 .then(res => res.json())
-//                 .then(() => allUser())
-//             // result = ''
-//         })
-//      // result = ''
-//
-// })
-// document.getElementById('deleteModal').addEventListener('submit', (e) => {
-//     e.preventDefault();
-//     let role = document.getElementById('rolesDelete');
-//     let rolesUserDelete = [];
-//     let rolesUserDeleteValue = '';
-//     for (let i = 0; i < role.options.length; i++) {
-//         if (role.options[i].selected) {
-//             rolesUserDelete.push({id: role.options[i].value, name: role.options[i].text});
-//             rolesUserDeleteValue += role.options[i].innerHTML + ' ';
-//         }
-//     }
-//
-//     fetch(urlUsers + '/' + idDelete.value, {
-//         method: 'DELETE',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             id: idDelete.value,
-//             firstname: firstNameDelete.value,
-//             lastname: lastNameDelete.value,
-//             age: ageDelete.value,
-//             email: emailDelete.value,
-//             password: passwordDelete.value,
-//             roles: rolesUserDelete
-//         })
-//     })
-//         .then(() => {
-//             // Удаление строки из таблицы на фронтенде
-//             let table = document.getElementById("users-table");
-//             let rowToDelete = document.getElementById("userRow_" + idDelete.value);
-//             table.deleteRow(rowToDelete.rowIndex);
-//
-//             // Закрытие модального окна
-//             // $('#deleteModal').modal('hide');
-//             // deleteUserModal.hide();
-//         });
-//     // deleteUserModal.hide();
-//     $('#deleteModal').modal('hide');
-//     result = ''
-// });
-
-
-// document.getElementById('deleteModal').addEventListener('submit', (e) => {
-//     e.preventDefault();
-//     let role = document.getElementById('rolesDelete');
-//     let rolesUserDelete = [];
-//     let rolesUserDeleteValue = '';
-//     for (let i = 0; i < role.options.length; i++) {
-//         if (role.options[i].selected) {
-//             rolesUserDelete.push({id: role.options[i].value, name: role.options[i].text});
-//             rolesUserDeleteValue += role.options[i].innerHTML + ' ';
-//         }
-//     }
-//
-//     fetch(urlUsers + '/' + idDelete.value, {
-//         method: 'DELETE',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             id: idDelete.value,
-//             firstname: firstNameDelete.value,
-//             lastname: lastNameDelete.value,
-//             age: ageDelete.value,
-//             email: emailDelete.value,
-//             password: passwordDelete.value,
-//             roles: rolesUserDelete
-//         })
-//     })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json();
-//         })
-//         .then(() => {
-//             // Удаление строки из таблицы на фронтенде
-//             let table = document.getElementById("users-table");
-//             let rowToDelete = document.getElementById("userRow_" + idDelete.value);
-//             table.deleteRow(rowToDelete.rowIndex);
-//
-//             // Закрытие модального окна
-//             $('#deleteModal').modal('hide');
-//         })
-//         .catch(error => {
-//             console.error('There was a problem with the fetch operation:', error);
-//         });
-// });

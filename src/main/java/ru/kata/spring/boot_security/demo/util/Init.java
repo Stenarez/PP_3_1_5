@@ -7,7 +7,6 @@ import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Set;
 
 @Component

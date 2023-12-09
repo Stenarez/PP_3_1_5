@@ -25,12 +25,12 @@ import java.util.List;
 public class AdminRestController {
 
     private final UserService userService;
-//    private final RoleService roleService;
+
 
     @Autowired
     public AdminRestController(UserService userService) {
         this.userService = userService;
-//        this.roleService = roleService;
+
     }
 
     @GetMapping("/admin")
@@ -38,16 +38,12 @@ public class AdminRestController {
         List<User> vseUser = userService.allUsers();
         return new ResponseEntity<>(vseUser, HttpStatus.OK);
     }
-//        User userDrug = userService.findByEmail(principal.getName());
-//        model.addAttribute("newUser", user);
-//        model.addAttribute("principal", userDrug);
-//        model.addAttribute("user", userService.allUsers());
-//        model.addAttribute("roles", roleService.allRoles());
+
     @GetMapping("/user")
     public ResponseEntity<User> oneUser(Principal principal) {
-    User user = userService.findByEmail(principal.getName());
-    return new ResponseEntity<>(user, HttpStatus.OK);
-}
+        User user = userService.findByEmail(principal.getName());
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 
     @GetMapping("/admin/{id}")
     public ResponseEntity<User> showById(@PathVariable int id) throws NoSuchUserException {
