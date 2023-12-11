@@ -1,7 +1,9 @@
 const urlUsers = '/api/admin';
 const users = '/api/user';
+
 const deleteUserModal = new bootstrap.Modal(document.getElementById('deleteModal'))
 const editUserModal = new bootstrap.Modal(document.getElementById(`editModal`))
+
 
 fetch(users)
     .then(res => res.json())
@@ -14,11 +16,13 @@ fetch(users)
         <span> ${allRole}</span>`
     })
 let result = ''
-allUser()
+allUser();
 
 
 // Заполнение таблицы пользователей
 function allUser() {
+
+
     fetch(urlUsers)
         .then(response => response.json())
         .then(users => {
@@ -27,7 +31,7 @@ function allUser() {
                     let roles = ''
                     i.roles.forEach(role =>
                         roles += role.name.replace('ROLE_', '') + ' ')
-                    result += `<tr id="userRow_${i.id}">
+                    result += `<tr>
 
                     <td>${i.id}</td>
                     <td>${i.firstname}</td>
@@ -47,14 +51,12 @@ function allUser() {
                          </button>
                          </td> 
                     </tr>`
-
                 }
 
                 document.getElementById("users-table").innerHTML = result;
             }
         )
 }
-
 
 // //Добавление пользователя
 newUser = document.getElementById('add');
@@ -68,9 +70,9 @@ newUser.addEventListener('submit', (e) => {
             rolesAddUser.push({
                 id: role.options[i].value, name: role.options[i].text
             })
-
         }
     }
+    console.log(rolesAddUser)
     fetch(urlUsers, {
         method: 'POST',
         headers: {
@@ -86,44 +88,18 @@ newUser.addEventListener('submit', (e) => {
         })
     })
         .then(response => response.json())
-        .then((newUser) => {
-            addUserToTable(newUser);
+        .then(() => {
+
             newUser.reset();
+            result = ''
+            allUser()
 
             $('[href="#nav-home"]').tab('show');
 
         })
+
 })
 
-function addUserToTable(user) {
-    let roles = '';
-    user.roles.forEach(role => {
-        roles += role.name.replace('ROLE_', '') + ' ';
-    });
-
-    let newRow = `<tr>
-                    <td>${user.id}</td>
-                    <td>${user.firstname}</td>
-                    <td>${user.lastname}</td>
-                    <td>${user.age}</td>
-                    <td>${user.email}</td>
-                    <td>${roles}</td>
-                    <td>
-                        <button type="button" class="btn btn-info" data-action="edit" data-toggle="modal"
-                            data-target="#editModal" id="editButton" data-uid=${user.id} onclick="editModal(${user.id})">Edit
-                        </button>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger" data-action="delete" data-toggle="modal"
-                            data-target="#deleteModal" id="deleteButton" data-uid=${user.id} onclick="deleteModal(${user.id})">Delete
-                        </button>
-                    </td> 
-                </tr>`;
-
-    document.getElementById("users-table").insertAdjacentHTML('beforeend', newRow);
-    result = ''
-    $('[href="#nav-home"]').tab('show');
-}
 
 // // Изменение пользователя
 const idEdit = document.getElementById('idEdit')
@@ -134,11 +110,11 @@ const emailEdit = document.getElementById('emailEdit')
 const passwordEdit = document.getElementById('passwordEdit')
 
 
-let rowEdit = null
 idUser = document.getElementById('idEdit')
+let editForm = document.forms["editForm"];
 
 function editModal(id) {
-    let editForm = document.forms["editForm"];
+
 
     fetch(`/api/admin/` + id)
         .then(response => {
@@ -152,25 +128,29 @@ function editModal(id) {
                     editForm.password.value = u.password;
                     editForm.roles.value = u.roles;
 
+
                     editUserModal.show()
 
                 })
+
         })
 }
 
-
-document.getElementById('editModal').addEventListener('submit', (e) => {
+document.getElementById("editModal").addEventListener('submit', (e) => {
     e.preventDefault()
-    let role = document.getElementById('rolesEdit')
     let rolesUserEdit = []
-    let rolesUserEditValue = ''
+
+    let role = document.getElementById('rolesEdit')
+
     for (let i = 0; i < role.options.length; i++) {
         if (role.options[i].selected) {
-            rolesUserEdit.push({name: role.options[i].text})
-            rolesUserEditValue += role.options[i].innerHTML + ' '
+            rolesUserEdit.push({
+                id: role.options[i].value,
+                name: 'ROLE_' + role.options[i].text
+            })
         }
     }
-
+    console.log(rolesUserEdit)
     fetch(urlUsers + '/' + idEdit.value, {
         method: 'PATCH',
         headers: {
@@ -184,51 +164,22 @@ document.getElementById('editModal').addEventListener('submit', (e) => {
             email: emailEdit.value,
             password: passwordEdit.value,
             roles: rolesUserEdit
+
         })
     })
-        .then(response => response.json())
-        .then((updatedUser) => {
-            updateTableRow(updatedUser);
+
+        .then(() => {
+
+
+            result = ''
+            allUser()
+
             $('#editModal').modal('hide')
 
         })
+
 })
 
-function updateTableRow(updatedUser) {
-    let roles = '';
-    updatedUser.roles.forEach(role => {
-        roles += role.name.replace('ROLE_', '') + ' ';
-    });
-
-    let updatedRow = `<td>${updatedUser.id}</td>
-                      <td>${updatedUser.firstname}</td>
-                      <td>${updatedUser.lastname}</td>
-                      <td>${updatedUser.age}</td>
-                      <td>${updatedUser.email}</td>
-                      <td>${roles}</td>
-                      <td>
-                          <button type="button" class="btn btn-info" data-action="edit" data-toggle="modal"
-                              data-target="#editModal" id="editButton" data-uid=${updatedUser.id} onclick="editModal(${updatedUser.id})">Edit
-                          </button>
-                      </td>
-                      <td>
-                          <button type="button" class="btn btn-danger" data-action="delete" data-toggle="modal"
-                              data-target="#deleteModal" id="deleteButton" data-uid=${updatedUser.id} onclick="deleteModal(${updatedUser.id})">Delete
-                          </button>
-                      </td>`;
-
-    // Найти и обновить строку в таблице
-    let table = document.getElementById("users-table");
-    let rows = table.getElementsByTagName("tr");
-
-    for (let i = 0; i < rows.length; i++) {
-        let cells = rows[i].getElementsByTagName("td");
-        if (cells.length > 0 && cells[0].innerHTML == updatedUser.id) {
-            rows[i].innerHTML = updatedRow;
-            break;
-        }
-    }
-}
 
 // Удаление
 
@@ -247,10 +198,11 @@ function deleteModal(id) {
                     deleteForm.password.value = u.password;
                     deleteForm.roles.value = u.roles;
 
-                    deleteUserModal.show()
+                    deleteUserModal.show();
+
 
                 })
-        })
+        });
 }
 
 document.getElementById('deleteForm').addEventListener('submit', (e) => {
